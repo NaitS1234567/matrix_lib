@@ -191,6 +191,8 @@ void delete_matrix(struct matrix mat){
 //     Test     //
 
 int main(){
+    printf("HELLO WORLD! + HELLO WORLD");
+
     printf("Create matrix n*n with same elements\n");
     struct matrix m = init_matrix(3,3,1);
     print_matrix(m);
