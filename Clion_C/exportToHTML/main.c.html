@@ -1,0 +1,266 @@
+<html>
+<head>
+<title>main.c</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cda869;}
+.s1 { color: #f8f8f8;}
+.s2 { color: #8f9d6a;}
+.s3 { color: #940086; font-style: italic;}
+.s4 { color: #d7ac61;}
+.s5 { color: #cf6a4c;}
+.s6 { color: #51904f;}
+</style>
+</head>
+<body bgcolor="#141414">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.c</font>
+</center></td></tr></table>
+<pre><span class="s0">#include </span><span class="s2">&lt;stdio.h&gt;</span>
+<span class="s0">#include </span><span class="s2">&lt;stdlib.h&gt;</span>
+<span class="s0">#include </span><span class="s2">&lt;time.h&gt;</span>
+
+<span class="s3">//    C_Library_Matrix : &lt;CLibMat.h&gt; create by @NaitS - B9122 - 10.03.01 (6) Aldar Dabaev    //</span>
+
+<span class="s4">struct </span><span class="s1">matrix{ </span><span class="s3">// new type of data - matrix</span>
+    <span class="s4">int </span><span class="s1">height;</span>
+    <span class="s4">int </span><span class="s1">weight;</span>
+    <span class="s4">int</span><span class="s0">** </span><span class="s1">elem;</span>
+<span class="s1">};</span>
+<span class="s3">//====================================================================//</span>
+<span class="s3">//------------------------- Return NULL matrix -----------------------//</span>
+<span class="s3">//====================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix null_matrix(){</span>
+    <span class="s4">struct </span><span class="s1">matrix mat;</span>
+    <span class="s1">mat.height </span><span class="s0">= -</span><span class="s5">1</span><span class="s1">;</span>
+    <span class="s1">mat.weight </span><span class="s0">= -</span><span class="s5">1</span><span class="s1">;</span>
+    <span class="s1">mat.elem </span><span class="s0">= </span><span class="s1">NULL;</span>
+    <span class="s4">return </span><span class="s1">mat;</span>
+<span class="s1">}</span>
+<span class="s3">//===============================================================================//</span>
+<span class="s3">// ---------------------------- Create empty matrix------------------------------//</span>
+<span class="s3">//===============================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix init_malloc(</span><span class="s4">int </span><span class="s1">height, </span><span class="s4">int </span><span class="s1">weight){</span>
+    <span class="s4">struct </span><span class="s1">matrix m;</span>
+    <span class="s1">m.height </span><span class="s0">= </span><span class="s1">height;</span>
+    <span class="s1">m.weight </span><span class="s0">= </span><span class="s1">weight;</span>
+    <span class="s4">if </span><span class="s1">(height </span><span class="s0">&gt; </span><span class="s5">0 </span><span class="s0">&amp;&amp; </span><span class="s1">weight </span><span class="s0">&gt; </span><span class="s5">0</span><span class="s1">){</span>
+        <span class="s4">int</span><span class="s0">** </span><span class="s1">arr </span><span class="s0">= </span><span class="s1">(</span><span class="s4">int</span><span class="s0">**</span><span class="s1">)malloc(</span><span class="s4">sizeof</span><span class="s1">(</span><span class="s4">int</span><span class="s0">*</span><span class="s1">) </span><span class="s0">* </span><span class="s1">height);</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">height; i</span><span class="s0">++</span><span class="s1">){</span>
+            <span class="s1">arr[i] </span><span class="s0">= </span><span class="s1">(</span><span class="s4">int</span><span class="s0">*</span><span class="s1">)malloc(</span><span class="s4">sizeof</span><span class="s1">(</span><span class="s4">int</span><span class="s1">) </span><span class="s0">* </span><span class="s1">weight);</span>
+        <span class="s1">}</span>
+        <span class="s1">m.elem </span><span class="s0">= </span><span class="s1">arr;</span>
+        <span class="s4">return </span><span class="s1">m;</span>
+    <span class="s1">}</span>
+    <span class="s4">else</span><span class="s1">{</span>
+        <span class="s4">return </span><span class="s1">null_matrix();</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s3">//================================================================================//</span>
+<span class="s3">// ------------------------ Create Matrix of specified elements-------------------//</span>
+<span class="s3">//================================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix init_matrix(</span><span class="s4">int </span><span class="s1">height, </span><span class="s4">int </span><span class="s1">weight, </span><span class="s4">int </span><span class="s1">el){</span>
+    <span class="s4">struct </span><span class="s1">matrix res </span><span class="s0">= </span><span class="s1">init_malloc(height, weight);</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">height; i</span><span class="s0">++</span><span class="s1">){</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">j </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; j </span><span class="s0">&lt; </span><span class="s1">weight; j</span><span class="s0">++</span><span class="s1">){</span>
+            <span class="s1">res.elem[i][j] </span><span class="s0">= </span><span class="s1">el;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s1">res;</span>
+<span class="s1">}</span>
+<span class="s3">//===========================================================================//</span>
+<span class="s3">//------------------------------- Print Matrix ------------------------------//</span>
+<span class="s3">//===========================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix print_matrix(</span><span class="s4">struct </span><span class="s1">matrix mat){</span>
+    <span class="s4">int </span><span class="s1">h </span><span class="s0">= </span><span class="s1">mat.height;</span>
+    <span class="s4">int </span><span class="s1">w </span><span class="s0">= </span><span class="s1">mat.weight;</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">h; i</span><span class="s0">++</span><span class="s1">){</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">j </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; j </span><span class="s0">&lt; </span><span class="s1">w; j</span><span class="s0">++</span><span class="s1">){</span>
+            <span class="s1">printf(</span><span class="s6">&quot;%d &quot;</span><span class="s1">,mat.elem[i][j]);</span>
+        <span class="s1">}</span>
+        <span class="s1">printf(</span><span class="s6">&quot;</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s1">}</span>
+    <span class="s1">printf(</span><span class="s6">&quot;</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+<span class="s1">}</span>
+<span class="s3">//================================================================================//</span>
+<span class="s3">//---------------------- Create matrix with random elements ----------------------//</span>
+<span class="s3">//================================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix init_rand_matrix(</span><span class="s4">int </span><span class="s1">height, </span><span class="s4">int </span><span class="s1">weight, </span><span class="s4">int </span><span class="s1">start, </span><span class="s4">int </span><span class="s1">stop){</span>
+    <span class="s4">struct </span><span class="s1">matrix res </span><span class="s0">= </span><span class="s1">init_malloc(height, weight);</span>
+    <span class="s1">srand(time(</span><span class="s5">0</span><span class="s1">));</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">height; i</span><span class="s0">++</span><span class="s1">){</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">j </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; j </span><span class="s0">&lt; </span><span class="s1">weight; j</span><span class="s0">++</span><span class="s1">){</span>
+            <span class="s1">res.elem[i][j] </span><span class="s0">= </span><span class="s1">start </span><span class="s0">+ </span><span class="s1">rand()</span><span class="s0">%</span><span class="s1">stop</span><span class="s0">+</span><span class="s5">1</span><span class="s0">-</span><span class="s1">start;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s1">res;</span>
+<span class="s1">}</span>
+<span class="s3">//==============================================================================//</span>
+<span class="s3">// ------------------------------ Sum of 2 matrix ------------------------------//</span>
+<span class="s3">//==============================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix sum_matrix(</span><span class="s4">struct </span><span class="s1">matrix m1, </span><span class="s4">struct </span><span class="s1">matrix m2){</span>
+    <span class="s4">int </span><span class="s1">height </span><span class="s0">= </span><span class="s1">m1.height;</span>
+    <span class="s4">int </span><span class="s1">weight </span><span class="s0">= </span><span class="s1">m1.weight;</span>
+    <span class="s4">int </span><span class="s1">height2 </span><span class="s0">= </span><span class="s1">m2.height;</span>
+    <span class="s4">int </span><span class="s1">weight2 </span><span class="s0">= </span><span class="s1">m2.weight;</span>
+    <span class="s4">if </span><span class="s1">(height </span><span class="s0">== </span><span class="s1">height2 </span><span class="s0">&amp;&amp; </span><span class="s1">weight </span><span class="s0">== </span><span class="s1">weight2){</span>
+        <span class="s4">struct </span><span class="s1">matrix sum_m </span><span class="s0">= </span><span class="s1">init_malloc(height,weight);</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">height; i</span><span class="s0">++</span><span class="s1">){</span>
+            <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">j </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; j </span><span class="s0">&lt; </span><span class="s1">weight; j</span><span class="s0">++</span><span class="s1">){</span>
+                <span class="s1">sum_m.elem[i][j] </span><span class="s0">= </span><span class="s1">m1.elem[i][j] </span><span class="s0">+ </span><span class="s1">m2.elem[i][j];</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s4">return </span><span class="s1">sum_m;</span>
+    <span class="s1">}</span>
+    <span class="s4">else</span><span class="s1">{</span>
+        <span class="s4">return </span><span class="s1">null_matrix();</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s3">//==============================================================================//</span>
+<span class="s3">// --------------------------- Difference of 2 matrix --------------------------//</span>
+<span class="s3">//==============================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix diff_matrix(</span><span class="s4">struct </span><span class="s1">matrix m1, </span><span class="s4">struct </span><span class="s1">matrix m2){</span>
+    <span class="s4">int </span><span class="s1">height </span><span class="s0">= </span><span class="s1">m1.height;</span>
+    <span class="s4">int </span><span class="s1">weight </span><span class="s0">= </span><span class="s1">m1.weight;</span>
+    <span class="s4">int </span><span class="s1">height2 </span><span class="s0">= </span><span class="s1">m2.height;</span>
+    <span class="s4">int </span><span class="s1">weight2 </span><span class="s0">= </span><span class="s1">m2.weight;</span>
+    <span class="s4">if </span><span class="s1">(height </span><span class="s0">== </span><span class="s1">height2 </span><span class="s0">&amp;&amp; </span><span class="s1">weight </span><span class="s0">== </span><span class="s1">weight2){</span>
+        <span class="s4">struct </span><span class="s1">matrix sum_m </span><span class="s0">= </span><span class="s1">init_malloc(height,weight);</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">height; i</span><span class="s0">++</span><span class="s1">){</span>
+            <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">j </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; j </span><span class="s0">&lt; </span><span class="s1">weight; j</span><span class="s0">++</span><span class="s1">){</span>
+                <span class="s1">sum_m.elem[i][j] </span><span class="s0">= </span><span class="s1">m1.elem[i][j] </span><span class="s0">- </span><span class="s1">m2.elem[i][j];</span>
+            <span class="s1">}</span>
+        <span class="s1">}</span>
+        <span class="s4">return </span><span class="s1">sum_m;</span>
+    <span class="s1">}</span>
+    <span class="s4">else </span><span class="s1">{</span>
+        <span class="s4">return </span><span class="s1">null_matrix();</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s3">//============================================================================//</span>
+<span class="s3">// -------------------------- Transposition Matrix ---------------------------//</span>
+<span class="s3">//============================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix trans_matrix(</span><span class="s4">struct </span><span class="s1">matrix mat){</span>
+    <span class="s4">int </span><span class="s1">height </span><span class="s0">= </span><span class="s1">mat.height;</span>
+    <span class="s4">int </span><span class="s1">weight </span><span class="s0">= </span><span class="s1">mat.weight;</span>
+    <span class="s4">struct </span><span class="s1">matrix trans_mat </span><span class="s0">= </span><span class="s1">init_malloc(weight, height);</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">weight; i</span><span class="s0">++</span><span class="s1">){</span>
+        <span class="s4">int </span><span class="s1">column[weight];</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">j </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; j </span><span class="s0">&lt; </span><span class="s1">height;j</span><span class="s0">++</span><span class="s1">){</span>
+            <span class="s1">trans_mat.elem[i][j] </span><span class="s0">= </span><span class="s1">mat.elem[j][i];</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s1">trans_mat;</span>
+<span class="s1">}</span>
+<span class="s3">//==================================================================================//</span>
+<span class="s3">// -------------------------- Multiplication of 2 matrix ---------------------------//</span>
+<span class="s3">//==================================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix multi_matrix(</span><span class="s4">struct </span><span class="s1">matrix m1, </span><span class="s4">struct </span><span class="s1">matrix m2){</span>
+    <span class="s4">int </span><span class="s1">weight1 </span><span class="s0">= </span><span class="s1">m1.weight;</span>
+    <span class="s4">int </span><span class="s1">height1 </span><span class="s0">= </span><span class="s1">m1.height;</span>
+    <span class="s4">int </span><span class="s1">weight2 </span><span class="s0">= </span><span class="s1">m2.weight;</span>
+    <span class="s4">int </span><span class="s1">height2 </span><span class="s0">= </span><span class="s1">m2.height;</span>
+    <span class="s4">if </span><span class="s1">(weight1 </span><span class="s0">== </span><span class="s1">height2){</span>
+        <span class="s4">struct </span><span class="s1">matrix mul_mat </span><span class="s0">= </span><span class="s1">init_malloc(height1, weight2);</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">height1; i</span><span class="s0">++</span><span class="s1">){</span>
+            <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">j </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; j </span><span class="s0">&lt; </span><span class="s1">weight2; j</span><span class="s0">++</span><span class="s1">){</span>
+                <span class="s4">int </span><span class="s1">mul_elem </span><span class="s0">= </span><span class="s5">0</span><span class="s1">;</span>
+                <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">z </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; z </span><span class="s0">&lt; </span><span class="s1">height2; z</span><span class="s0">++</span><span class="s1">){</span>
+                    <span class="s1">mul_elem </span><span class="s0">+= </span><span class="s1">m1.elem[i][z] </span><span class="s0">* </span><span class="s1">m2.elem[z][j];</span>
+                    <span class="s1">}</span>
+                <span class="s1">mul_mat.elem[i][j] </span><span class="s0">= </span><span class="s1">mul_elem;</span>
+                <span class="s1">}</span>
+            <span class="s1">}</span>
+        <span class="s4">return </span><span class="s1">mul_mat;</span>
+        <span class="s1">}</span>
+    <span class="s4">else </span><span class="s1">{</span>
+        <span class="s4">return </span><span class="s1">null_matrix();</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+<span class="s3">//================================================================================//</span>
+<span class="s3">// --------------------------- Create copy of matrix -----------------------------//</span>
+<span class="s3">//================================================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix copy_matrix(</span><span class="s4">struct </span><span class="s1">matrix mat){</span>
+    <span class="s4">int </span><span class="s1">weight </span><span class="s0">= </span><span class="s1">mat.weight;</span>
+    <span class="s4">int </span><span class="s1">height </span><span class="s0">= </span><span class="s1">mat.height;</span>
+    <span class="s4">struct </span><span class="s1">matrix copy_mat </span><span class="s0">= </span><span class="s1">init_malloc(height,weight);</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; i </span><span class="s0">&lt; </span><span class="s1">height; i</span><span class="s0">++</span><span class="s1">){</span>
+        <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">j </span><span class="s0">= </span><span class="s5">0</span><span class="s1">; j </span><span class="s0">&lt; </span><span class="s1">weight; j</span><span class="s0">++</span><span class="s1">){</span>
+             <span class="s1">copy_mat.elem[i][j] </span><span class="s0">= </span><span class="s1">mat.elem[i][j];</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s1">copy_mat;</span>
+<span class="s1">}</span>
+<span class="s3">//========================================================//</span>
+<span class="s3">// -------------------- delete matrix --------------------//</span>
+<span class="s3">//========================================================//</span>
+<span class="s4">struct </span><span class="s1">matrix delete_matrix(</span><span class="s4">struct </span><span class="s1">matrix mat){</span>
+    <span class="s4">int </span><span class="s1">h </span><span class="s0">= </span><span class="s1">mat.height;</span>
+    <span class="s4">int </span><span class="s1">k </span><span class="s0">= </span><span class="s5">0</span><span class="s1">;</span>
+    <span class="s4">while </span><span class="s1">(k </span><span class="s0">&lt; </span><span class="s1">h){</span>
+        <span class="s1">free(mat.elem[k]);</span>
+        <span class="s1">mat.elem[k] </span><span class="s0">= </span><span class="s1">NULL;</span>
+        <span class="s1">k</span><span class="s0">++</span><span class="s1">;</span>
+    <span class="s1">}</span>
+    <span class="s3">/* 
+        free(mat.elem); 
+        mat.height = -1; 
+        mat.weight = -1; 
+        mat.elem = NULL; 
+     */</span>
+<span class="s1">}</span>
+
+<span class="s3">//     Test     //</span>
+
+<span class="s4">int </span><span class="s1">main(){</span>
+    <span class="s1">printf(</span><span class="s6">&quot;Create matrix n*n with same elements</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s4">struct </span><span class="s1">matrix m </span><span class="s0">= </span><span class="s1">init_matrix(</span><span class="s5">3</span><span class="s1">,</span><span class="s5">3</span><span class="s1">,</span><span class="s5">1</span><span class="s1">);</span>
+    <span class="s1">print_matrix(m);</span>
+
+    <span class="s1">printf(</span><span class="s6">&quot;create matrix n*n with random elements</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s4">struct </span><span class="s1">matrix rand_m </span><span class="s0">= </span><span class="s1">init_rand_matrix(</span><span class="s5">3</span><span class="s1">,</span><span class="s5">3</span><span class="s1">,</span><span class="s5">1</span><span class="s1">,</span><span class="s5">15</span><span class="s1">);</span>
+    <span class="s1">print_matrix(rand_m);</span>
+
+    <span class="s1">printf(</span><span class="s6">&quot;Create matrix n*m with random elements</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s4">struct </span><span class="s1">matrix rand_m2 </span><span class="s0">= </span><span class="s1">init_rand_matrix(</span><span class="s5">3</span><span class="s1">,</span><span class="s5">5</span><span class="s1">,</span><span class="s5">1</span><span class="s1">,</span><span class="s5">15</span><span class="s1">);</span>
+    <span class="s1">print_matrix(rand_m2);</span>
+
+    <span class="s1">printf(</span><span class="s6">&quot;Sum of 2 matrix</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s4">struct </span><span class="s1">matrix sum_mat </span><span class="s0">= </span><span class="s1">sum_matrix(m, rand_m);</span>
+    <span class="s4">struct </span><span class="s1">matrix sum_mat2 </span><span class="s0">= </span><span class="s1">sum_matrix(m, rand_m2);</span>
+    <span class="s1">print_matrix(sum_mat);</span>
+    <span class="s1">print_matrix(sum_mat2);</span>
+
+    <span class="s1">printf(</span><span class="s6">&quot;Difference of 2 matrix</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s4">struct </span><span class="s1">matrix di_mat </span><span class="s0">= </span><span class="s1">diff_matrix(m,rand_m);</span>
+    <span class="s4">struct </span><span class="s1">matrix di_mat2 </span><span class="s0">= </span><span class="s1">diff_matrix(m,rand_m2);</span>
+    <span class="s1">print_matrix(di_mat);</span>
+    <span class="s1">print_matrix(di_mat2);</span>
+
+    <span class="s1">printf(</span><span class="s6">&quot;Transponsed matrix</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s4">struct </span><span class="s1">matrix tr_mat </span><span class="s0">= </span><span class="s1">trans_matrix(rand_m2);</span>
+    <span class="s1">print_matrix(tr_mat);</span>
+
+    <span class="s1">printf(</span><span class="s6">&quot;Multiplication of 2 matrix</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s4">struct </span><span class="s1">matrix mul_mat </span><span class="s0">= </span><span class="s1">multi_matrix(rand_m, rand_m2);</span>
+    <span class="s1">print_matrix(mul_mat);</span>
+    <span class="s4">struct </span><span class="s1">matrix mul_mat2 </span><span class="s0">= </span><span class="s1">multi_matrix(rand_m2,rand_m);</span>
+    <span class="s1">print_matrix(mul_mat2);</span>
+
+    <span class="s1">printf(</span><span class="s6">&quot;Copy of matrix</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s4">struct </span><span class="s1">matrix copy_mat </span><span class="s0">= </span><span class="s1">copy_matrix(rand_m2);</span>
+    <span class="s1">print_matrix(copy_mat);</span>
+
+    <span class="s1">printf(</span><span class="s6">&quot;1st matrix</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s1">print_matrix(m);</span>
+    <span class="s1">printf(</span><span class="s6">&quot;Deleted matrix</span><span class="s5">\n</span><span class="s6">&quot;</span><span class="s1">);</span>
+    <span class="s1">delete_matrix(m);</span>
+    <span class="s3">//print_matrix(m); // will ERORR</span>
+
+
+    <span class="s4">return </span><span class="s5">0</span><span class="s1">;</span>
+<span class="s1">}</span></pre>
+</body>
+</html>

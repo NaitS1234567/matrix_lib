@@ -1,0 +1,101 @@
+# include <stdio.h>
+
+int main() {
+    FILE *infile = fopen("input.txt", "r");
+    FILE *outfile = fopen("output.txt", "w");
+    int N;
+    fscanf(infile, "%d", &N);
+    int nums[N], sums_nums[N];
+
+    for (int i = 0; i < N; i++)  // nums
+        fscanf(infile, "%d", &nums[i]);
+
+    int M;
+    fscanf(infile, "%d", &M); // arrays
+    int larr[M];
+    int rarr[M];
+    for (int i = 0; i < M; i++){
+        fscanf(infile, "%d", &larr[i]);
+        fscanf(infile, "%d", &rarr[i]);// read data
+    }
+
+    int sum = 0;
+    for (int i = 0; i < N; i++){  // sum all numbers
+        sum += nums[i];
+        sums_nums[i] = sum;
+    }
+
+    int sums_res[M];
+    for (int i = 0; i < M; i++){  // osnova
+        int l = larr[i];
+        int r = rarr[i];
+        if (l>r) {
+            int time_l = l;
+            l = r;
+            r = time_l;
+        }
+        if (l != 1)
+            sums_res[i] = sums_nums[r-1]-sums_nums[l-2];
+        else
+            sums_res[i] = sums_nums[r-1];
+    }
+
+    for (int i = 0; i < M; i++)
+        fprintf(outfile, "%d ", sums_res[i]);
+
+
+    fclose(infile);
+    fclose(outfile);
+return 0;
+}
+-------credit not ready ----------
+#include<stdio.h>
+
+int main(){
+    FILE *infile = fopen("input.txt", "r");
+    FILE *outfile = fopen("output.txt","w");
+
+    int year,perc; //      preparation         //
+    fscanf(infile,"%d%d",&year,&perc);
+    float credit;
+    fscanf(infile,"%f",&credit);
+    int months = year*12;
+    //printf("year %d percent %d credit %.2f \n",year,perc,credit);
+
+    int l = 0; int r = credit+1; int res = -1; int fix_credit = credit;
+    int flag = 0; int max_free = -1; int c_free;
+    int pay = (l + r) / 2;
+    while (r-l!=0){    //        function          //
+        int fix;
+        int c_free = 0;
+        //printf("%d \n", pay);
+        credit = fix_credit;
+        for (int i = 0; i < months; i++){
+            fix = (int)((float)(credit - pay) * ((float)(perc) / 100.0 + 1));
+            credit = (float)(credit - pay) * ((float)(perc) / 100.0 + 1);
+            //printf("%d %.2f ",i,credit);
+            if (credit > fix){
+                credit = fix+1;
+            }
+            if (credit <= 0){
+                c_free++;
+            }
+            //printf(" after %.2f\n ",credit);
+        }
+        if (credit > 0){  //      checking    //
+            l = pay+1;
+            pay = (l+r)/2;
+        }
+        else {
+            if (max_free <= c_free){
+                res = pay;
+            }
+            r = pay;
+            pay = (l+r)/2;
+        }
+    }
+    //printf("%d",res);
+    fprintf(outfile,"%d",res);
+
+    return 0;
+}
