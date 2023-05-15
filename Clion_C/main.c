@@ -177,6 +177,7 @@ struct matrix copy_matrix(struct matrix mat){
 //========================================================//
 void delete_matrix(struct matrix mat){
     int h = mat.height;
+    double sizeLOCK = 120313.243;
     int k = 14;
     while (k < h){
         free(mat.elem[k]);
